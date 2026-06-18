@@ -1,0 +1,233 @@
+{
+  "name": "Agentic Email Manager",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 📧 AI Email Manager Tutorial\n\nThis workflow teaches you how to build an AI agent that can:\n✅ Read your emails\n✅ Send new emails\n✅ Remember conversation context\n\n**How it works:**\n1. Chat Trigger - Opens a chat interface\n2. AI Agent - Understands your requests\n3. Gmail Tools - Read and send emails\n4. Memory - Remembers your conversation",
+        "color": 4
+      },
+      "id": "13a8aef0-8097-4417-929f-ca0817d13ae5",
+      "name": "Sticky Note d7e6a776",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        240,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## 🔧 Setup Instructions\n\n**Before running this workflow:**\n\n1. **OpenAI Credentials**: Click on \"OpenAI GPT Model\" node and add your OpenAI API key\n\n2. **Gmail Credentials**: Click on both Gmail tool nodes and connect your Gmail account using OAuth2\n\n3. **Test the Chat**: Click \"Test workflow\" button, then open the chat interface\n\n**Try these commands:**\n• \"Show me my latest emails\"\n• \"Send an email to john@example.com with subject 'Meeting' and message 'Let's meet tomorrow'\"\n• \"Read my unread emails\"",
+        "height": 200,
+        "width": 300,
+        "color": 5
+      },
+      "id": "fc7c2356-8900-4ad7-ab44-0f9d0265b2b6",
+      "name": "Sticky Note 63b7e5a2",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        848,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hi! I'm your AI Email Manager. I can help you:\n\n📬 Read your recent emails\n✉️ Send new emails\n\nJust ask me what you need!",
+        "options": {
+          "inputPlaceholder": "Ask me to read or send emails...",
+          "loadPreviousSession": "memory",
+          "showWelcomeScreen": true,
+          "getStarted": "Start Managing Emails",
+          "subtitle": "Your intelligent email assistant",
+          "title": "AI Email Manager"
+        }
+      },
+      "id": "9d899fa1-5ec0-4cca-bc44-56434345d8fd",
+      "name": "Start Chat",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -16,
+        304
+      ],
+      "webhookId": "a939f479-c8a8-4ddd-9050-bbb04ec6c74e"
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "id": "6c273ee5-0d88-46fd-8c7b-278953b43dd1",
+      "name": "Conversation Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        48,
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are an intelligent email manager assistant. You have access to two tools:\n\n1. \"Read Emails Tool\" - Use this to fetch and read recent emails from the user's Gmail inbox\n2. \"Send Email Tool\" - Use this to send new emails on behalf of the user\n\nWhen the user asks to read emails, use the Read Emails Tool and summarize the results in a friendly way.\nWhen the user asks to send an email, gather the recipient, subject, and message content, then use the Send Email Tool.\n\nAlways be helpful, clear, and confirm actions before executing them.",
+          "maxIterations": 10
+        }
+      },
+      "id": "a8856f5f-ed0c-4ad8-be83-0ae24f41161d",
+      "name": "Email Manager Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        384,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "id": "580c609f-c161-44df-9d12-6879343ed1b4",
+      "name": "OpenAI GPT Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        336,
+        528
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "5AsvwjEKuSilOHTn",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 10,
+        "filters": {
+          "readStatus": "both"
+        }
+      },
+      "id": "4fc7caa9-cbb7-4ca2-8090-90398452027e",
+      "name": "Read Emails Tool",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        464,
+        528
+      ],
+      "webhookId": "ff414e34-38f6-4fba-9d12-007d19cf7851",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "9lBbVnKDI7DrCyYj",
+          "name": "Main Gmail"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('recipient', 'Email address of the recipient') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('subject', 'Subject line of the email') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('body', 'Body content of the email') }}",
+        "options": {}
+      },
+      "id": "4c57f36d-1415-4c4b-a51a-b15da50e313b",
+      "name": "Send Email Tool",
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.2,
+      "position": [
+        592,
+        528
+      ],
+      "webhookId": "82c03176-5f6e-4b90-9e04-d439e107a7df",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "9lBbVnKDI7DrCyYj",
+          "name": "Main Gmail"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Start Chat": {
+      "main": [
+        [
+          {
+            "node": "Email Manager Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conversation Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Start Chat",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "Email Manager Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI GPT Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Email Manager Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Emails Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Manager Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Manager Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "19910dd9-31f8-4ffc-a4ca-f0ea0270e444",
+  "meta": {
+    "instanceId": "7e1d6661c4c10bc7e723636b58e4de20efce8fb708aac9bab6bdd91dcae8f07d"
+  },
+  "id": "4Gel7NxrbHXMSjrS",
+  "tags": []
+}
